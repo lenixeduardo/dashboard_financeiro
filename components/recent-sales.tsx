@@ -1,67 +1,53 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card';
+import {
+  demoTransactions,
+  formatCurrency
+} from '@/lib/finance';
+import { ArrowDownRight, ArrowUpRight } from 'lucide-react';
 
 export function RecentSales() {
+  const transactions = [...demoTransactions]
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .slice(0, 6);
+
   return (
-    <div className="space-y-8">
-      <div className="flex items-center">
-        <Avatar className="h-9 w-9">
-          <AvatarImage src="/avatars/01.png" alt="Avatar" />
-          <AvatarFallback>OM</AvatarFallback>
-        </Avatar>
-        <div className="ml-4 space-y-1">
-          <p className="text-sm font-medium leading-none">Olivia Martin</p>
-          <p className="text-sm text-muted-foreground">
-            olivia.martin@email.com
-          </p>
-        </div>
-        <div className="ml-auto font-medium">+$1,999.00</div>
-      </div>
-      <div className="flex items-center">
-        <Avatar className="flex h-9 w-9 items-center justify-center space-y-0 border">
-          <AvatarImage src="/avatars/02.png" alt="Avatar" />
-          <AvatarFallback>JL</AvatarFallback>
-        </Avatar>
-        <div className="ml-4 space-y-1">
-          <p className="text-sm font-medium leading-none">Jackson Lee</p>
-          <p className="text-sm text-muted-foreground">jackson.lee@email.com</p>
-        </div>
-        <div className="ml-auto font-medium">+$39.00</div>
-      </div>
-      <div className="flex items-center">
-        <Avatar className="h-9 w-9">
-          <AvatarImage src="/avatars/03.png" alt="Avatar" />
-          <AvatarFallback>IN</AvatarFallback>
-        </Avatar>
-        <div className="ml-4 space-y-1">
-          <p className="text-sm font-medium leading-none">Isabella Nguyen</p>
-          <p className="text-sm text-muted-foreground">
-            isabella.nguyen@email.com
-          </p>
-        </div>
-        <div className="ml-auto font-medium">+$299.00</div>
-      </div>
-      <div className="flex items-center">
-        <Avatar className="h-9 w-9">
-          <AvatarImage src="/avatars/04.png" alt="Avatar" />
-          <AvatarFallback>WK</AvatarFallback>
-        </Avatar>
-        <div className="ml-4 space-y-1">
-          <p className="text-sm font-medium leading-none">William Kim</p>
-          <p className="text-sm text-muted-foreground">will@email.com</p>
-        </div>
-        <div className="ml-auto font-medium">+$99.00</div>
-      </div>
-      <div className="flex items-center">
-        <Avatar className="h-9 w-9">
-          <AvatarImage src="/avatars/05.png" alt="Avatar" />
-          <AvatarFallback>SD</AvatarFallback>
-        </Avatar>
-        <div className="ml-4 space-y-1">
-          <p className="text-sm font-medium leading-none">Sofia Davis</p>
-          <p className="text-sm text-muted-foreground">sofia.davis@email.com</p>
-        </div>
-        <div className="ml-auto font-medium">+$39.00</div>
-      </div>
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Movimentações recentes</CardTitle>
+        <CardDescription>Últimas entradas e saídas do período.</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-5">
+        {transactions.map((transaction) => {
+          const income = transaction.type === 'income';
+          const Icon = income ? ArrowUpRight : ArrowDownRight;
+
+          return (
+            <div key={transaction.id} className="flex items-center gap-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full border">
+                <Icon className="h-4 w-4" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium">
+                  {transaction.description}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {transaction.category} · {new Date(`${transaction.date}T12:00:00`).toLocaleDateString('pt-BR')}
+                </p>
+              </div>
+              <div className="text-sm font-medium">
+                {income ? '+' : '-'}
+                {formatCurrency(transaction.amount)}
+              </div>
+            </div>
+          );
+        })}
+      </CardContent>
+    </Card>
   );
 }
